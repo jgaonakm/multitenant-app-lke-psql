@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: orders-api
+  namespace: demo
+spec: 
+  type: ClusterIP # No se expone fuera del cluster
+  ports:
+    - name: api
+      port: 80
+      targetPort: http
+  selector:
+    app: orders-api

@@ -1,0 +1,16 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: orders-gateway
+  namespace: demo
+spec:
+  gatewayClassName: nginx
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+                # dominio para exponer la aplicación, con wildcard para cada tenant
+      hostname: "*.example.com"
+      allowedRoutes:
+        namespaces:
+          from: All 

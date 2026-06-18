@@ -63,6 +63,28 @@ spec:
   gatewayClassName: nginx
   listeners:
     - name: https
+      port: 80
+      protocol: HTTPS
+      hostname: "*.app.ejemplo.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+```
+
+`allowedRoutes.namespaces.from: All` permite que los `HTTPRoute` de cualquier *namespace* (uno por inquilino) se asocien a este Gateway compartido.
+
+Para ambientes productivos es recomendado utilizar TLS, quedando de la siguiente manera
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: gateway-multitenant
+  namespace: nginx-gateway
+spec:
+  gatewayClassName: nginx
+  listeners:
+    - name: https
       port: 443
       protocol: HTTPS
       hostname: "*.app.ejemplo.com"
@@ -75,8 +97,6 @@ spec:
         namespaces:
           from: All
 ```
-
-`allowedRoutes.namespaces.from: All` permite que los `HTTPRoute` de cualquier *namespace* (uno por inquilino) se asocien a este Gateway compartido.
 
 ### Crear registro de DNS comodín para el Gateway
 
@@ -121,7 +141,7 @@ stringData:
   DATABASE_URL: "postgresql://tenant_acme:CONTRASENA_ACME@HOST-pgsql.akamai.com:PUERTO/defaultdb?sslmode=require"
 ```
 
-> El parámetro `sslmode=require` es importante: Managed Database de Akamai **fuerza el cifrado SSL**, por lo que la conexión debe negociarlo.
+> El parámetro `sslmode=require` es importante: Managed Database de Akamai **fuerza el cifrado SSL**, por lo que la conexión debe negociarlo. Es necesario ajustar la cadena de conexión al formato requerido por la aplicación.
 
 ### Buenas prácticas y endurecimiento
 

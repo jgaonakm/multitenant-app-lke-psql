@@ -1,0 +1,38 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+        # se define una ruta para cada tenant, 
+        # apuntando al mismo servicio pero con un filtro 
+        # para agregar el tenant id en el header
+  name: orders-route-tenant-a
+  namespace: demo
+spec:
+  parentRefs:
+    - name: orders-gateway
+      namespace: demo
+      sectionName: http
+  hostnames:
+      # cada tenant tiene su propio subdominio, pero apuntan al mismo gateway y servicio
+    - tenant-a.example.com
+  rules:
+    - matches:
+      - path:
+          type: PathPrefix
+          value: "/orders"
+      backendRefs:
+      - name: orders-api  # apunta al mismo servicio para todos los tenants
+        namespace: demo
+        port: 80
+      filters:
+      - type: RequestHeaderModifier
+        requestHeaderModifier:
+          set:
+                    # El header x-tenant-id se puede usar en la aplicación 
+                    # para identificar el tenant y enrutar a la base de datos correspondiente
+            - name: x-tenant-id
+              value: tenant-a
+      - type: URLRewrite
+        urlRewrite:
+          path:
+            type: ReplacePrefixMatch
+            replacePrefixMatch: /
