@@ -240,4 +240,3 @@ Status:
       Type:                  ResolvedRefs
     Controller Name:         gateway.nginx.org/nginx-gateway-controller
 ```
-
