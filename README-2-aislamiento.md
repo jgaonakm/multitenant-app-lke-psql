@@ -2,7 +2,7 @@
 
 ## Descripción
 
-La funcionalidad de Row-Level Security de PostgreSQL permite asociar *políticas* a una tabla que se evalúan fila por fila. Cada vez que un inquilino consulta o modifica datos, PostgreSQL aplica automáticamente la política y descarta cualquier fila que no le pertenezca, sin que la aplicación tenga que añadir cláusulas `WHERE tenant_id = ...` en cada consulta.
+La funcionalidad de [Row-Level Security de PostgreSQL](https://www.postgresql.org/docs/current/ddl-rowsecurity.html) permite asociar *políticas* a una tabla que se evalúan fila por fila. Cada vez que un inquilino consulta o modifica datos, PostgreSQL aplica automáticamente la política y descarta cualquier fila que no le pertenezca, sin que la aplicación tenga que añadir cláusulas `WHERE tenant_id = ...` en cada consulta.
 
 La estrategia de este ejemplo es asignar **un rol de base de datos por inquilino** y vincular la propiedad de cada fila a ese rol mediante la función `current_user`. Así, la pertenencia de los datos queda atada a la identidad con la que se conecta cada inquilino, que se proporciona mendiante un *Secret* de Kubernetes a la aplicación desplegada.
 
@@ -13,6 +13,8 @@ Conéctese como el usuario administrador de la base gestionada (el cliente exige
 ```bash
 psql "postgresql://akmadmin:CONTRASENA_ADMIN@HOST-pgsql.akamai.com:PUERTO/defaultdb?sslmode=require"
 ```
+
+> Para trabajar en entorno gráfico, se puede utilizar pgAdmin
 
 Cree la tabla. La columna `tenant_id` toma por defecto el rol conectado, de modo que cada inserción queda "estampada" automáticamente con el inquilino correcto:
 
